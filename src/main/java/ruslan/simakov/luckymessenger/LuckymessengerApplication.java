@@ -9,5 +9,4 @@ public class LuckymessengerApplication {
     public static void main(String[] args) {
         SpringApplication.run(LuckymessengerApplication.class, args);
     }
-
 }

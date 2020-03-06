@@ -5,7 +5,7 @@ import ruslan.simakov.luckymessenger.service.BusinessLogicService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BusinessLogicServiceImpl implements BusinessLogicService {
+public class BusinessLogicServiceImpl implements BusinessLogicService  {
 
     @Override
     public void sleepAndRandomThrowRuntimeException(int seconds, int exceptionProbabilityProc) {

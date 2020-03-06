@@ -1,0 +1,10 @@
+package ruslan.simakov.luckymessenger.repository;
+
+import ruslan.simakov.luckymessenger.model.Notification;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
+}

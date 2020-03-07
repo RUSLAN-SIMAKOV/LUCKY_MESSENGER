@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 public class BusinessLogicServiceImpl implements BusinessLogicService  {
 
     @Override
-    public void sleepAndRandomThrowRuntimeException(int seconds, int exceptionProbabilityProc) {
+    public void sleepAndRandomThrowRuntimeException(int seconds, int exceptionProbabilityProc)
+            throws RuntimeException {
 
         try {
             Thread.sleep((long) (seconds * 1000 * Math.random()));
@@ -16,6 +17,6 @@ public class BusinessLogicServiceImpl implements BusinessLogicService  {
             e.printStackTrace();
         }
         int randomProc = (int) (100 * Math.random());
-        if(exceptionProbabilityProc > randomProc) throw new RuntimeException();
+        if(exceptionProbabilityProc > randomProc) throw new RuntimeException("Fail!");
     }
 }

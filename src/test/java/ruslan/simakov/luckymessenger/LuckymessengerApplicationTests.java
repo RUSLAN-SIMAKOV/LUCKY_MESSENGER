@@ -9,5 +9,4 @@ class LuckymessengerApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }

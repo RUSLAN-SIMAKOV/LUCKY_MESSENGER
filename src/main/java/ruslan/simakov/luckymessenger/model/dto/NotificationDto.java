@@ -9,6 +9,5 @@ public class NotificationDto {
     private Long id;
     private Long commentId;
     private LocalDateTime timeGeneratingNotification;
-    private boolean isNotificationDelivered;
-
+    private Boolean isNotificationDelivered;
 }

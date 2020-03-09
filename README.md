@@ -22,7 +22,7 @@ You can check comments and notifications in data base using "h2 console", just u
 http://localhost:8080/h2-console/ in Web-browser.
 You can add comments and notifications using Swagger, just use address
 http://localhost:8080/swagger-ui.html#/ in Web-browser.
-
+You can get all comments and notifications with pagination and sorting.
 
 
 ### Prerequisites

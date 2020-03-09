@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class MainController {
+public class MainController{
 
     @Autowired
     private CommentService commentService;
@@ -30,30 +31,35 @@ public class MainController {
     @Autowired
     private NotificationService notificationService;
 
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class, isolation = Isolation.SERIALIZABLE)
     @PostMapping(value = "/add")
-    public String addNewComment(@RequestBody CommentDto commentDto) {
+    public synchronized String addNewComment(@RequestBody CommentDto commentDto) {
 
         Comment newComment = new Comment();
         newComment.setComment(commentDto.getComment());
         newComment.setTimeGeneratingComment(LocalDateTime.now());
         newComment = commentService.addNewComment(newComment);
         commentService.doSomeWorkOnCommentCreation();
-        if (commentService.isCommentPresent(newComment)) {
-            Notification newNotification = new Notification();
-            newNotification.setCommentId(newComment.getId());
-            newNotification.setTimeGeneratingNotification(LocalDateTime.now());
-            newNotification.setIsNotificationDelivered(false);
-            notificationService.addNewNotification(newNotification);
-            try {
-                notificationService.doSomeWorkOnNotification();
-                newNotification.setIsNotificationDelivered(true);
+
+        Comment finalNewComment = newComment;
+        Thread runnable = new Thread(() -> {
+            if (commentService.isCommentPresent(finalNewComment)) {
+                Notification newNotification = new Notification();
+                newNotification.setCommentId(finalNewComment.getId());
+                newNotification.setTimeGeneratingNotification(LocalDateTime.now());
+                newNotification.setIsNotificationDelivered(false);
                 notificationService.addNewNotification(newNotification);
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-                return "Message created successful. Notification fail!";
+                try {
+                    notificationService.doSomeWorkOnNotification();
+                    newNotification.setIsNotificationDelivered(true);
+                    notificationService.addNewNotification(newNotification);
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
             }
-        }
+        });
+        runnable.setDaemon(true);
+        runnable.start();
         return "Success";
     }
 
